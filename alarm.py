@@ -78,10 +78,12 @@ class Alarm(threading.Thread):
             #return None 
         if delta_minutes > self.wake_up_minutes: 
             return None 
-
-        level = 1.0 -   delta_minutes / self.wake_up_minutes
-        red, green, blue = 255.0, 0.0, 255.0 * level 
-        #print(red,green, blue, self.wake_up_minutes, delta_minutes, level)
+        final_level = 0.7
+        level = final_level - (delta_minutes / self.wake_up_minutes) * final_level
+        red = 255.0
+        green = max(0, 255.0 - (delta_minutes * 11)) * level
+        blue = max(0, 255.0 - (delta_minutes * 20)) * level
+        print("red: {} green {} blue {} wakeup_minutes: {}  delta_minutes: {}  level: {}".format(red, green, blue, self.wake_up_minutes, delta_minutes, level))
         return Color(red, green, blue, level)
         #return None
     
@@ -103,8 +105,9 @@ class Alarm(threading.Thread):
             return 
         delta = self.time_of_day - now 
         delta_minutes = (delta.seconds  % SECONDS_PER_DAY) / SECONDS_PER_MINUTE
+        print("delta_minutes {}".format(delta_minutes))
         color = self.get_color(delta_minutes)
-        #print(now, "setting color", str(color), "for state", self)
+        print(now, "setting color", str(color), "for state", self)
         if color:
             led.fill(color)
             led.update()

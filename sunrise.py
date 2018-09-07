@@ -36,12 +36,12 @@ def redirct_to_main():
 
 @app.route("/on")
 def on():
-    level = 1.0
+    level = 0.2
 
     if "level" in request.args: level = float(request.args["level"])
 
     print("turning on with brightness", level)
-    led.fill(Color(255, 255, 255, level))
+    led.fill(Color(25, 25, 255, level))
     led.update()
     return jsonify({"status": "OK"}) 
 
@@ -97,7 +97,8 @@ def reset():
         
 @app.route("/test")
 def test():
-    anim = Wave(led, Color(255, 0, 0), 4)
+    #anim = Wave(led, Color(255, 0, 0), 4)
+    anim = RainbowCycle(led)
     for _ in range(led.lastIndex):
         anim.step()
         led.update()
